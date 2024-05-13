@@ -4,6 +4,19 @@ import threading
 import signal
 from TickerHandler import TickerHandler
 
+#== TODO =================================================================================================================
+# 1. Implement following python package to get price history (seems like you can get hourly charts aswell)
+#      - https://github.com/ranaroussi/yfinance
+#      - https://github.com/ranaroussi/yfinance/wiki/Ticker#returns
+#
+# 2. Implement all calulation functions
+#
+# 3. Implement some way to only store new price point when a new hour begins (on a specific "klockslag") since we curre
+#    don't get correct RSI calculations compared to tradingview since we get different datapoints compared to tradingview
+#    since we dont store data points at the same moments as tradingview
+#=========================================================================================================================
+
+
 minute = 60
 ticker_names = ["QQQ"]
 
