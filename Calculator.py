@@ -19,10 +19,6 @@ class Calculator:
                 rs = avgGains / avgLoss
                 return 100 - (100 / (1 + rs))
 
-            # Update the lists to only contain the last 14 entries
-            #self.gains = self.gains[-14:]
-            #self.loss = lastLoss[-14:]
-
         return 0
 
     def is_bearish_divergence(datapoints, nrOfPeaks):
@@ -35,12 +31,13 @@ class Calculator:
         rsiPI = Calculator.find_list_peaks(rsiDataPoints, 10) #May need to tweek the order (10) 
         if len(rsiPI) < nrOfPeaks:
             return False
-        rsiPI = rsiPI.sort()
+        rsiPI.sort()
         rsiPI = rsiPI[-nrOfPeaks:]
 
-        for i in range(0, len(rsiPI) - 1):
+        for i in range(len(rsiPI) - 1):
             rsiIndex = rsiPI[i]
-            if rsiDataPoints[rsiIndex] < rsiDataPoints[rsiIndex + 1]:  #Should I have just "<" or "<=" here? 
+            rsiIndex2 = rsiPI[i + 1]
+            if rsiDataPoints[rsiIndex] <= rsiDataPoints[rsiIndex2]:  #Should I have just "<" or "<=" here? 
                 return False
 
 
@@ -48,12 +45,13 @@ class Calculator:
         pricePI = Calculator.find_list_peaks(priceDataPoints, 10) #May need to tweek the order (10)
         if len(pricePI) < nrOfPeaks:
             return False
-        pricePI = pricePI.sort()
+        pricePI.sort()
         pricePI = pricePI[-nrOfPeaks:]
 
-        for i in range(0, len(pricePI) - 1):
+        for i in range(len(pricePI) - 1):
             priceIndex = pricePI[i]
-            if priceDataPoints[priceIndex] > priceIndex[priceIndex + 1]:
+            priceIndex2 = pricePI[i + 1]
+            if priceDataPoints[priceIndex] >= priceDataPoints[priceIndex2]:
                 return False
                 
         return True
@@ -70,12 +68,13 @@ class Calculator:
         rsiLI= Calculator.find_list_lows(rsiDataPoints, 10) #May need to tweek the order (10) 
         if len(rsiLI) < nrOfPeaks:
             return False
-        rsiLI = rsiLI.sort()
+        rsiLI.sort()
         rsiLI = rsiLI[-nrOfPeaks:]
 
         for i in range(0, len(rsiLI) - 1):
             rsiIndex = rsiLI[i]
-            if rsiDataPoints[rsiIndex] < rsiDataPoints[rsiIndex + 1]:  #Should I have just "<" or "<=" here? 
+            rsiIndex2 = rsiLI[i + 1]
+            if rsiDataPoints[rsiIndex] >= rsiDataPoints[rsiIndex2]:  #Should I have just "<" or "<=" here? 
                 return False
 
 
@@ -83,12 +82,13 @@ class Calculator:
         priceLI = Calculator.find_list_lows(priceDataPoints, 10) #May need to tweek the order (10)
         if len(priceLI) < nrOfPeaks:
             return False
-        priceLI = priceLI.sort()
+        priceLI.sort()
         priceLI = priceLI[-nrOfPeaks:]
 
         for i in range(0, len(priceLI) - 1):
             priceIndex = priceLI[i]
-            if priceDataPoints[priceIndex] > priceIndex[priceIndex + 1]:
+            priceIndex2 = priceLI[i + 1]
+            if priceDataPoints[priceIndex] <= priceDataPoints[priceIndex2]:
                 return False
                 
         return True
