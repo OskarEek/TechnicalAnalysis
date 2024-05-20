@@ -1,13 +1,14 @@
 import numpy as np
 from scipy.signal import argrelextrema
+from Datapoint import Datapoint
 
 class Calculator:
 
-    def calulate_rsi(gains, loss, currentGain, currentLoss):
-        if len(gains) >= 13:
+    def calulate_rsi(datapoints: list[Datapoint], currentGain, currentLoss):
+        if len(datapoints) >= 13:
             # Get the last 13 recorded gains and losses
-            lastGains = gains[-13:]
-            lastLoss = loss[-13:]
+            lastGains = [x.gain for x in datapoints][-13:]
+            lastLoss = [x.loss for x in datapoints][-13:]
 
             avgGains = (sum(lastGains) + currentGain) / 14
             avgLoss = (sum(lastLoss) + currentLoss) / 14

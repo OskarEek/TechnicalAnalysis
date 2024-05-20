@@ -20,6 +20,10 @@ class TickerHandler:
             stock = self.get_stock_from_id(data['id'])
             stock.update(data)
 
+            os.system('cls')
+            for stock in self.stocks:
+                stock.print_data()
+
     def get_stock_from_id(self, id):
         stockResult = [x for x in self.stocks if x.ticker == id]
         assert(len(stockResult) == 1)
