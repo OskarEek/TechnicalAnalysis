@@ -40,7 +40,17 @@ class TickerHandler:
         while not self.stop_flag.is_set():
             for stock in self.stocks:
                 stock.toggle_store_new_price()
-            time.sleep(self.chart_time)
+            self.sleep_with_check(self.chart_time)
+            
+    def sleep_with_check(self, duration):
+        # Break the sleep into smaller intervals to check the stop flag more frequently
+        interval = 0.1  # Check every 0.1 seconds
+        end_time = time.time() + duration
+        while time.time() < end_time:
+            if self.stop_flag.is_set():
+                break
+            time.sleep(interval)
+
 
     def terminate_threads(self):
         self.chart_timer_thread.join()
