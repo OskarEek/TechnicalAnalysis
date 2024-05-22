@@ -87,7 +87,6 @@ class Stock:
         #    print_string += "Loss: " + str([x.loss for x in self.datapoints]) + "\n"
         
         print_string += "\n=====================================================\n"
-        print_string += str(self.datapoints)
         print(print_string)
 
     def get_colored_string(self, color, value):
