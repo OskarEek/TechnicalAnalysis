@@ -4,13 +4,9 @@ import os
 from Stock import Stock 
 
 class TickerHandler:
-    def __init__(self, chartTimeSeconds, tickerNames):
-        self.stocks = [Stock(x) for x in tickerNames]
-        self.chart_time = chartTimeSeconds
-
+    def __init__(self, chart, tickerNames):
+        self.stocks = [Stock(x, chart) for x in tickerNames]
         self.stop_flag = threading.Event()
-        self.chart_timer_thread = threading.Thread(target=self.toggle_price_listen)
-        self.chart_timer_thread.start()
 
 
     def on_message(self, ws, data):
@@ -23,34 +19,9 @@ class TickerHandler:
             os.system('cls')
             for stock in self.stocks:
                 stock.print_data()
+                
 
     def get_stock_from_id(self, id):
         stockResult = [x for x in self.stocks if x.ticker == id]
         assert(len(stockResult) == 1)
         return stockResult[0]
-    
-
-    def signal_handler(self, sig, frame):
-        print("Ctrl+C detected. Stopping the threads.")
-        self.stop_flag.set()
-        self.terminate_threads()
-
-    def toggle_price_listen(self):
-        print("Toggling price listener")
-        while not self.stop_flag.is_set():
-            for stock in self.stocks:
-                stock.toggle_store_new_price()
-            self.sleep_with_check(self.chart_time)
-            
-    def sleep_with_check(self, duration):
-        # Break the sleep into smaller intervals to check the stop flag more frequently
-        interval = 0.1  # Check every 0.1 seconds
-        end_time = time.time() + duration
-        while time.time() < end_time:
-            if self.stop_flag.is_set():
-                break
-            time.sleep(interval)
-
-
-    def terminate_threads(self):
-        self.chart_timer_thread.join()
