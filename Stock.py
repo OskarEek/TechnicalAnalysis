@@ -32,7 +32,7 @@ class Stock:
     def update(self, data):
         self.previous_data = self.current_data
         self.current_data = Datapoint(data['price'], self.convert_timestamp(data['timestamp']))
-        chartTime = self.get_chart_time(data['timestamp'])
+        chartTime = self.get_chart_time(self.chart, data['timestamp'])
 
         if self.last_chart_update_time == None:
             if not self.last_chart_update_time == chartTime:
@@ -52,7 +52,18 @@ class Stock:
                 self.rsi30 = True
             
         if not self.last_chart_update_time == chartTime:
-            self.datapoints.append(self.previous_data)
+            newDatapointToStore = self.previous_data
+            if self.get_chart_time('S', data['timestamp']) == '00': #This only works for minute chart, for hourly chart we have to look if both minute and seconds is 00
+                newDatapointToStore = self.current_data
+
+            if len(self.datapoints) > 0:
+                lastStored = self.datapoints[-1]
+                price_change = newDatapointToStore.price - lastStored.price
+                newDatapointToStore.change_percentage = price_change / lastStored.price
+                newDatapointToStore.gain = newDatapointToStore.change_percentage if newDatapointToStore.change_percentage > 0 else 0
+                newDatapointToStore.loss = -newDatapointToStore.change_percentage if newDatapointToStore.change_percentage < 0 else 0
+
+            self.datapoints.append(newDatapointToStore)
             self.last_chart_update_time = chartTime 
 
 
@@ -61,7 +72,7 @@ class Stock:
         if self.current_data == None:
             return
 
-        print_string = self.default_print_color + "======================================================\n\n"
+        print_string = self.default_print_color + "==================================================\n\n"
         print_string += "Stock: " + self.ticker + "\n"
 
         if not self.previous_data == None:
@@ -86,7 +97,8 @@ class Stock:
         #    print_string += "Gains: " + str([x.gain for x in self.datapoints]) + "\n" 
         #    print_string += "Loss: " + str([x.loss for x in self.datapoints]) + "\n"
         
-        print_string += "\n=====================================================\n"
+        print_string += "\n==================================================\n"
+        print_string += str([x.price for x in self.datapoints])
         print(print_string)
 
     def get_colored_string(self, color, value):
@@ -98,9 +110,9 @@ class Stock:
         date_time = datetime.fromtimestamp(timestamp_s, tz=timezone.utc)
         return date_time.strftime('%Y-%m-%d %H:%M:%S')
 
-    def get_chart_time(self, timestamp_ms):
+    def get_chart_time(self, chart, timestamp_ms):
         timestamp_s = timestamp_ms / 1000
         date_time = datetime.fromtimestamp(timestamp_s, tz=timezone.utc)
-        return date_time.strftime('%' + self.chart)
+        return date_time.strftime('%' + chart)
 
 
