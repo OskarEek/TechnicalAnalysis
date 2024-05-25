@@ -58,11 +58,13 @@ class Stock:
             
         if not self.last_chart_update_time == chartTime:
             newDatapointToStore = self.previous_data
-            newDatapointToStore.max_price = self.highest_price if not self.highest_price == None else newDatapointToStore.price
-            newDatapointToStore.min_price = self.lowest_price if not self.lowest_price == None else newDatapointToStore.price
-
             if self.get_chart_time('S', data['timestamp']) == '00': #This only works for minute chart, for hourly chart we have to look if both minute and seconds is 00
                 newDatapointToStore = self.current_data
+
+            newDatapointToStore.max_price = self.highest_price if not self.highest_price == None else newDatapointToStore.price
+            newDatapointToStore.min_price = self.lowest_price if not self.lowest_price == None else newDatapointToStore.price
+            self.lowest_price = None
+            self.highest_price = None
 
             if len(self.datapoints) > 0:
                 lastStored = self.datapoints[-1]
