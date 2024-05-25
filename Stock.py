@@ -43,10 +43,12 @@ class Stock:
                 self.last_chart_update_time = chartTime
             return
             
+        #Make this into a function ===============
         price_change = self.current_data.price - self.previous_data.price
         self.current_data.change_percentage = price_change / self.previous_data.price
         self.current_data.gain = self.current_data.change_percentage if self.current_data.change_percentage > 0 else 0
         self.current_data.loss = -self.current_data.change_percentage if self.current_data.change_percentage < 0 else 0
+        #==========================================
 
         self.current_data.rsi = Calculator.calulate_rsi(self.datapoints, self.current_data.gain, self.current_data.loss)
         if not self.previous_data == None:
@@ -81,6 +83,12 @@ class Stock:
         
         if self.highest_price == None or self.current_data.price > self.highest_price:
             self.highest_price = self.current_data.price
+
+        if self.rsi30 and self.current_data.rsi >= 50:
+            self.rsi30 = False
+
+        if self.rsi70 and self.current_data.rsi <= 50:
+            self.rsi70 = False
 
 
 
