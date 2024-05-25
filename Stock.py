@@ -84,7 +84,7 @@ class Stock:
 
 
 
-    def print_data(self, printArrs=False):
+    def print_data(self):
         if self.current_data == None:
             return
 
