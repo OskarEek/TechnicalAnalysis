@@ -21,7 +21,11 @@ class Stock:
         self.datapoints: list[Datapoint] = []
         self.current_data: Datapoint = None
         self.previous_data: Datapoint = None
+
+        #Updates resets every time a new datapoint is stored
         self.last_chart_update_time = None
+        self.lowest_price = None
+        self.highest_price = None
         
         #Print
         colorama_init(autoreset=True)
@@ -50,9 +54,13 @@ class Stock:
                 self.rsi70 = True
             elif self.previous_data.rsi <= 30 and self.current_data.rsi > 30:
                 self.rsi30 = True
+        
             
         if not self.last_chart_update_time == chartTime:
             newDatapointToStore = self.previous_data
+            newDatapointToStore.max_price = self.highest_price if not self.highest_price == None else newDatapointToStore.price
+            newDatapointToStore.min_price = self.lowest_price if not self.lowest_price == None else newDatapointToStore.price
+
             if self.get_chart_time('S', data['timestamp']) == '00': #This only works for minute chart, for hourly chart we have to look if both minute and seconds is 00
                 newDatapointToStore = self.current_data
 
@@ -65,6 +73,12 @@ class Stock:
 
             self.datapoints.append(newDatapointToStore)
             self.last_chart_update_time = chartTime 
+        
+        if self.lowest_price == None or self.current_data.price < self.lowest_price:
+            self.lowest_price = self.current_data.price
+        
+        if self.highest_price == None or self.current_data.price > self.highest_price:
+            self.highest_price = self.current_data.price
 
 
 
